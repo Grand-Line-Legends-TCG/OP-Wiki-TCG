@@ -23,6 +23,7 @@
   --color-ink-soft: oklch(0.4 0.03 258);
   --color-focus: oklch(0.9 0.14 92);
   --color-fruit-night: oklch(0.12 0.045 292);
+  --color-card-black: oklch(0.09 0.004 265);
 
   --font-display: 'Bangers', Impact, 'Arial Narrow', sans-serif;
   --font-ui: 'Geist Variable', system-ui, sans-serif;
@@ -489,29 +490,49 @@
   box-shadow: 8px 8px 0 var(--color-ink);
 }
 
-/* Card back: ocean with halftone and a gold wheel */
+/* Card back: manga cover. Black field, dark grey chart texture, straw-hat crest */
+
+/* Card back: key art /card-back.png, framed, with the site name at the foot */
 
 .tcg-card__back {
   align-items: center;
   justify-content: center;
-  background-color: var(--color-ocean);
-  background-image: var(--halftone);
-  background-size: 10px 10px;
+  background-color: var(--color-card-black);
+  background-image: url('/card-back.png');
+  background-size: contain;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  box-shadow:
+    inset 0 0 0 1px oklch(0.86 0.13 86 / 0.35),
+    8px 8px 0 var(--color-ink);
 }
+
+/* Gold frame inside the art */
 
 .tcg-card__back::before {
   content: '';
   position: absolute;
-  inset: 12px;
+  inset: 9px;
   border: 2px solid var(--color-gold);
-  border-radius: 8px;
+  border-radius: 9px;
+  box-shadow: 0 0 0 1px oklch(0.1 0.02 265 / 0.7), inset 0 0 0 1px oklch(0.1 0.02 265 / 0.5);
+  pointer-events: none;
 }
 
-.tcg-card__mark {
-  width: 46%;
-  aspect-ratio: 1;
+.tcg-card__backmark {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 7%;
+  font-family: var(--font-ui);
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  text-align: center;
   color: var(--color-gold);
-  filter: drop-shadow(3px 3px 0 var(--color-ink));
+  text-shadow: 0 1px 2px oklch(0 0 0 / 0.9);
 }
 
 /* Card front: wanted poster on aged parchment */

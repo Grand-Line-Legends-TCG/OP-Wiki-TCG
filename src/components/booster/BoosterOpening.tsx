@@ -164,7 +164,7 @@ function TradingCard({
       </svg>
       <span className="tcg-card__inner">
         <span className="tcg-card__face tcg-card__back" aria-hidden="true">
-          <ShipWheel className="tcg-card__mark" />
+          <span className="tcg-card__backmark">Grand Line Legends</span>
         </span>
         <span className="tcg-card__face tcg-card__front" aria-hidden="true">
           <span className="tcg-card__header">WANTED</span>
