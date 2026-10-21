@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import '@fontsource/bangers/400.css'
+import '@fontsource/cinzel/400.css'
+import '@fontsource/cinzel/700.css'
+import '@fontsource/cinzel/900.css'
 import './booster.css'
 
 type Rarity = 'C' | 'UC' | 'R' | 'SR'
@@ -14,6 +17,21 @@ const RARITY_NAME: Record<Rarity, string> = {
   SR: 'Super rare',
 }
 
+type WantedEntry = {
+  name: string
+  description: string
+  bounty: string
+  image?: string
+}
+
+const WANTED: WantedEntry[] = [
+  { name: 'Nom de la carte', description: 'Description à définir.', bounty: '—' },
+  { name: 'Nom de la carte', description: 'Description à définir.', bounty: '—' },
+  { name: 'Nom de la carte', description: 'Description à définir.', bounty: '—' },
+  { name: 'Nom de la carte', description: 'Description à définir.', bounty: '—' },
+  { name: 'Nom de la carte', description: 'Description à définir.', bounty: '—' },
+]
+
 function ShipWheel({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 48 48" aria-hidden="true" focusable="false">
@@ -25,6 +43,20 @@ function ShipWheel({ className }: { className?: string }) {
         strokeWidth="3.5"
         strokeLinecap="round"
       />
+    </svg>
+  )
+}
+
+function ScrollCurl({ side }: { side: 'left' | 'right' }) {
+  return (
+    <svg
+      className={`tcg-card__scroll tcg-card__scroll--${side}`}
+      viewBox="0 0 24 120"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M20 4 C8 2 6 14 12 22 C16 28 18 34 12 46 C8 54 4 58 12 60 C20 62 22 66 12 74 C6 82 8 92 14 96 C18 100 14 112 6 116" />
     </svg>
   )
 }
@@ -84,6 +116,7 @@ function TradingCard({
   flipped: boolean
   onClick: () => void
 }) {
+  const entry = WANTED[index]
   const label = flipped
     ? `Carte ${index + 1} : ${RARITY_NAME[rarity]}. Passer à la suivante`
     : `Carte ${index + 1} face cachée. Révéler`
@@ -95,26 +128,43 @@ function TradingCard({
       onClick={onClick}
       aria-label={label}
     >
+      <svg className="tcg-card__defs" aria-hidden="true" focusable="false">
+        <filter id="tcg-aged" x="-5%" y="-5%" width="110%" height="110%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="edge" />
+          <feDisplacementMap in="SourceGraphic" in2="edge" scale="2.4" xChannelSelector="R" yChannelSelector="G" result="rough" />
+          <feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="3" seed="3" result="wear" />
+          <feColorMatrix
+            in="wear"
+            type="matrix"
+            values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -3 0 0 0 2.6"
+            result="speck"
+          />
+          <feComposite in="rough" in2="speck" operator="in" />
+        </filter>
+      </svg>
       <span className="tcg-card__inner">
         <span className="tcg-card__face tcg-card__back" aria-hidden="true">
           <ShipWheel className="tcg-card__mark" />
         </span>
         <span className="tcg-card__face tcg-card__front" aria-hidden="true">
-          <span className="tcg-card__top">
-            <span className="tcg-card__number">N° {String(index + 1).padStart(3, '0')}</span>
-            <span className="tcg-card__rarity">{rarity}</span>
+          <span className="tcg-card__header">WANTED</span>
+          <span className="tcg-card__photo">
+            {entry.image ? (
+              <img src={entry.image} alt="" />
+            ) : (
+              <ShipWheel className="tcg-card__photo-icon" />
+            )}
           </span>
-          <span className="tcg-card__art">
-            <ShipWheel className="tcg-card__art-icon" />
-            <span className="tcg-card__art-label">Illustration</span>
-          </span>
-          <span className="tcg-card__name">Nom de la carte</span>
-          <span className="tcg-card__effect">
-            Effet de la carte à définir. Texte de règle sur deux lignes.
-          </span>
-          <span className="tcg-card__foot">
-            <span>{RARITY_NAME[rarity]}</span>
-            <span>Personnage</span>
+          <span className="tcg-card__lower">
+            <ScrollCurl side="left" />
+            <ScrollCurl side="right" />
+            <span className="tcg-card__alive">Dead or Alive</span>
+            <span className="tcg-card__name">{entry.name}</span>
+            <span className="tcg-card__effect">{entry.description}</span>
+            <span className="tcg-card__foot">
+              <span className="tcg-card__bounty">{entry.bounty}</span>
+              <span className="tcg-card__rank">{RARITY_NAME[rarity]}</span>
+            </span>
           </span>
         </span>
       </span>
