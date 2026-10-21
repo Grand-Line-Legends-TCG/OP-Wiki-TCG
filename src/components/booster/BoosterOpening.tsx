@@ -3,34 +3,50 @@ import '@fontsource/bangers/400.css'
 import '@fontsource/cinzel/400.css'
 import '@fontsource/cinzel/700.css'
 import '@fontsource/cinzel/900.css'
+import cartesData from '../../../cartes.json'
 import './booster.css'
 
-type Rarity = 'C' | 'UC' | 'R' | 'SR'
 type Phase = 'sealed' | 'shaking' | 'tearing' | 'reveal'
 
-const CARD_COUNT = 5
-const RARITIES: Rarity[] = ['C', 'C', 'UC', 'R', 'SR']
-const RARITY_NAME: Record<Rarity, string> = {
-  C: 'Commune',
-  UC: 'Peu commune',
-  R: 'Rare',
-  SR: 'Super rare',
-}
-
-type WantedEntry = {
-  name: string
+type CardData = {
+  pageid: number
+  title: string
+  rarity: string
+  image: string | null
   description: string
-  bounty: string
-  image?: string
 }
 
-const WANTED: WantedEntry[] = [
-  { name: 'Nom de la carte', description: 'Description à définir.', bounty: '—' },
-  { name: 'Nom de la carte', description: 'Description à définir.', bounty: '—' },
-  { name: 'Nom de la carte', description: 'Description à définir.', bounty: '—' },
-  { name: 'Nom de la carte', description: 'Description à définir.', bounty: '—' },
-  { name: 'Nom de la carte', description: 'Description à définir.', bounty: '—' },
-]
+const CARDS = cartesData as CardData[]
+const CARD_COUNT = 5
+const RARE_RARITIES = ['R', 'UR', 'SR', 'L']
+const RARITY_NAME: Record<string, string> = {
+  C: 'Commune',
+  PC: 'Peu commune',
+  R: 'Rare',
+  UR: 'Ultra rare',
+  SR: 'Super rare',
+  L: 'Leader',
+}
+
+const rarityName = (rarity: string) => RARITY_NAME[rarity] ?? rarity
+
+const isRare = (rarity: string) => RARE_RARITIES.includes(rarity)
+
+const nameSizeClass = (title: string) => {
+  if (title.length > 34) return ' tcg-card__name--xlong'
+  if (title.length > 18) return ' tcg-card__name--long'
+  return ''
+}
+
+function drawBooster(): CardData[] {
+  const pool = CARDS.filter((card) => card.title && card.description)
+  const picks: CardData[] = []
+  for (let i = 0; i < CARD_COUNT && pool.length > 0; i++) {
+    const idx = Math.floor(Math.random() * pool.length)
+    picks.push(pool.splice(idx, 1)[0])
+  }
+  return picks
+}
 
 function ShipWheel({ className }: { className?: string }) {
   return (
@@ -107,24 +123,23 @@ function BoosterPack({
 
 function TradingCard({
   index,
-  rarity,
+  card,
   flipped,
   onClick,
 }: {
   index: number
-  rarity: Rarity
+  card: CardData
   flipped: boolean
   onClick: () => void
 }) {
-  const entry = WANTED[index]
   const label = flipped
-    ? `Carte ${index + 1} : ${RARITY_NAME[rarity]}. Passer à la suivante`
+    ? `Carte ${index + 1} : ${rarityName(card.rarity)}. Passer à la suivante`
     : `Carte ${index + 1} face cachée. Révéler`
 
   return (
     <button
       type="button"
-      className={`tcg-card rarity-${rarity.toLowerCase()}${flipped ? ' is-flipped' : ''}`}
+      className={`tcg-card rarity-${card.rarity.toLowerCase()}${flipped ? ' is-flipped' : ''}`}
       onClick={onClick}
       aria-label={label}
     >
@@ -149,8 +164,8 @@ function TradingCard({
         <span className="tcg-card__face tcg-card__front" aria-hidden="true">
           <span className="tcg-card__header">WANTED</span>
           <span className="tcg-card__photo">
-            {entry.image ? (
-              <img src={entry.image} alt="" />
+            {card.image ? (
+              <img src={card.image} alt="" />
             ) : (
               <ShipWheel className="tcg-card__photo-icon" />
             )}
@@ -159,11 +174,11 @@ function TradingCard({
             <ScrollCurl side="left" />
             <ScrollCurl side="right" />
             <span className="tcg-card__alive">Dead or Alive</span>
-            <span className="tcg-card__name">{entry.name}</span>
-            <span className="tcg-card__effect">{entry.description}</span>
+            <span className={`tcg-card__name${nameSizeClass(card.title)}`}>{card.title}</span>
+            <span className="tcg-card__effect">{card.description}</span>
             <span className="tcg-card__foot">
-              <span className="tcg-card__bounty">{entry.bounty}</span>
-              <span className="tcg-card__rank">{RARITY_NAME[rarity]}</span>
+              <span className="tcg-card__bounty">{card.rarity}</span>
+              <span className="tcg-card__rank">{rarityName(card.rarity)}</span>
             </span>
           </span>
         </span>
@@ -174,6 +189,7 @@ function TradingCard({
 
 export default function BoosterOpening() {
   const [phase, setPhase] = useState<Phase>('sealed')
+  const [deck, setDeck] = useState<CardData[]>([])
   const [current, setCurrent] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [burst, setBurst] = useState(0)
@@ -187,15 +203,19 @@ export default function BoosterOpening() {
     return () => window.clearTimeout(timer)
   }, [phase])
 
-  const finished = current >= CARD_COUNT
-  const rarity = RARITIES[current]
+  const finished = current >= deck.length
+  const card = deck[current]
+  const rarity = card?.rarity ?? 'C'
 
-  const openPack = () => setPhase('shaking')
+  const openPack = () => {
+    setDeck(drawBooster())
+    setPhase('shaking')
+  }
 
   const advance = () => {
     if (!flipped) {
       setFlipped(true)
-      if (rarity === 'SR' || rarity === 'R') setBurst((b) => b + 1)
+      if (isRare(rarity)) setBurst((b) => b + 1)
       return
     }
     setCurrent((c) => c + 1)
@@ -214,18 +234,18 @@ export default function BoosterOpening() {
   } else if (phase !== 'reveal') {
     status = 'Ouverture…'
   } else if (finished) {
-    status = 'Booster ouvert. 5 cartes obtenues.'
+    status = `Booster ouvert. ${deck.length} cartes obtenues.`
   } else if (flipped) {
-    status = `${RARITY_NAME[rarity]}. Clique pour passer à la carte suivante.`
+    status = `${rarityName(rarity)}. Clique pour passer à la carte suivante.`
   } else {
-    status = `Carte ${current + 1} sur ${CARD_COUNT}. Clique pour la révéler.`
+    status = `Carte ${current + 1} sur ${deck.length}. Clique pour la révéler.`
   }
 
   return (
     <div className="booster-page">
       <header className="booster-head">
         <h1>Ouverture de booster</h1>
-        <p>Prototype d'interface · cartes factices</p>
+        <p>Prototype d'interface · cartes issues de cartes.json</p>
       </header>
 
       <main className="booster-main">
@@ -247,13 +267,13 @@ export default function BoosterOpening() {
               </button>
             ) : (
               <div className="tcg-stage">
-                {flipped && burst > 0 && (rarity === 'SR' || rarity === 'R') && (
+                {flipped && burst > 0 && isRare(rarity) && (
                   <span key={`burst-${burst}`} className={`burst burst--${rarity.toLowerCase()}`} aria-hidden="true" />
                 )}
                 <TradingCard
                   key={current}
                   index={current}
-                  rarity={rarity}
+                  card={card}
                   flipped={flipped}
                   onClick={advance}
                 />
@@ -261,15 +281,15 @@ export default function BoosterOpening() {
             )}
 
             <ol className="booster-slots" aria-label="Cartes obtenues">
-              {RARITIES.map((r, i) => {
+              {deck.map((c, i) => {
                 const filled = i < current
                 const isCurrent = i === current && !finished
                 return (
                   <li
-                    key={i}
-                    className={`slot slot--${r.toLowerCase()}${filled ? ' is-filled' : ''}${isCurrent ? ' is-current' : ''}`}
+                    key={c.pageid}
+                    className={`slot slot--${c.rarity.toLowerCase()}${filled ? ' is-filled' : ''}${isCurrent ? ' is-current' : ''}`}
                   >
-                    {filled ? r : i + 1}
+                    {filled ? c.rarity : i + 1}
                   </li>
                 )
               })}
