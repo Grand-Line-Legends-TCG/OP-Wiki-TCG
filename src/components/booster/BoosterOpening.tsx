@@ -1,17 +1,51 @@
 import { useEffect, useState } from 'react'
 import '@fontsource/bangers/400.css'
+import '@fontsource/cinzel/400.css'
+import '@fontsource/cinzel/700.css'
+import '@fontsource/cinzel/900.css'
+import cartesData from '../../../cartes.json'
 import './booster.css'
 
-type Rarity = 'C' | 'UC' | 'R' | 'SR'
 type Phase = 'sealed' | 'shaking' | 'tearing' | 'reveal'
 
+type CardData = {
+  pageid: number
+  title: string
+  rarity: string
+  image: string | null
+  description: string
+}
+
+const CARDS = cartesData as CardData[]
 const CARD_COUNT = 5
-const RARITIES: Rarity[] = ['C', 'C', 'UC', 'R', 'SR']
-const RARITY_NAME: Record<Rarity, string> = {
+const RARE_RARITIES = ['R', 'UR', 'SR', 'L']
+const RARITY_NAME: Record<string, string> = {
   C: 'Commune',
-  UC: 'Peu commune',
+  PC: 'Peu commune',
   R: 'Rare',
+  UR: 'Ultra rare',
   SR: 'Super rare',
+  L: 'Leader',
+}
+
+const rarityName = (rarity: string) => RARITY_NAME[rarity] ?? rarity
+
+const isRare = (rarity: string) => RARE_RARITIES.includes(rarity)
+
+const nameSizeClass = (title: string) => {
+  if (title.length > 34) return ' tcg-card__name--xlong'
+  if (title.length > 18) return ' tcg-card__name--long'
+  return ''
+}
+
+function drawBooster(): CardData[] {
+  const pool = CARDS.filter((card) => card.title && card.description)
+  const picks: CardData[] = []
+  for (let i = 0; i < CARD_COUNT && pool.length > 0; i++) {
+    const idx = Math.floor(Math.random() * pool.length)
+    picks.push(pool.splice(idx, 1)[0])
+  }
+  return picks
 }
 
 function ShipWheel({ className }: { className?: string }) {
@@ -25,6 +59,20 @@ function ShipWheel({ className }: { className?: string }) {
         strokeWidth="3.5"
         strokeLinecap="round"
       />
+    </svg>
+  )
+}
+
+function ScrollCurl({ side }: { side: 'left' | 'right' }) {
+  return (
+    <svg
+      className={`tcg-card__scroll tcg-card__scroll--${side}`}
+      viewBox="0 0 24 120"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M20 4 C8 2 6 14 12 22 C16 28 18 34 12 46 C8 54 4 58 12 60 C20 62 22 66 12 74 C6 82 8 92 14 96 C18 100 14 112 6 116" />
     </svg>
   )
 }
@@ -75,46 +123,63 @@ function BoosterPack({
 
 function TradingCard({
   index,
-  rarity,
+  card,
   flipped,
   onClick,
 }: {
   index: number
-  rarity: Rarity
+  card: CardData
   flipped: boolean
   onClick: () => void
 }) {
   const label = flipped
-    ? `Carte ${index + 1} : ${RARITY_NAME[rarity]}. Passer à la suivante`
+    ? `Carte ${index + 1} : ${rarityName(card.rarity)}. Passer à la suivante`
     : `Carte ${index + 1} face cachée. Révéler`
 
   return (
     <button
       type="button"
-      className={`tcg-card rarity-${rarity.toLowerCase()}${flipped ? ' is-flipped' : ''}`}
+      className={`tcg-card rarity-${card.rarity.toLowerCase()}${flipped ? ' is-flipped' : ''}`}
       onClick={onClick}
       aria-label={label}
     >
+      <svg className="tcg-card__defs" aria-hidden="true" focusable="false">
+        <filter id="tcg-aged" x="-5%" y="-5%" width="110%" height="110%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="edge" />
+          <feDisplacementMap in="SourceGraphic" in2="edge" scale="2.4" xChannelSelector="R" yChannelSelector="G" result="rough" />
+          <feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="3" seed="3" result="wear" />
+          <feColorMatrix
+            in="wear"
+            type="matrix"
+            values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -3 0 0 0 2.6"
+            result="speck"
+          />
+          <feComposite in="rough" in2="speck" operator="in" />
+        </filter>
+      </svg>
       <span className="tcg-card__inner">
         <span className="tcg-card__face tcg-card__back" aria-hidden="true">
           <ShipWheel className="tcg-card__mark" />
         </span>
         <span className="tcg-card__face tcg-card__front" aria-hidden="true">
-          <span className="tcg-card__top">
-            <span className="tcg-card__number">N° {String(index + 1).padStart(3, '0')}</span>
-            <span className="tcg-card__rarity">{rarity}</span>
+          <span className="tcg-card__header">WANTED</span>
+          <span className="tcg-card__photo">
+            {card.image ? (
+              <img src={card.image} alt="" />
+            ) : (
+              <ShipWheel className="tcg-card__photo-icon" />
+            )}
           </span>
-          <span className="tcg-card__art">
-            <ShipWheel className="tcg-card__art-icon" />
-            <span className="tcg-card__art-label">Illustration</span>
-          </span>
-          <span className="tcg-card__name">Nom de la carte</span>
-          <span className="tcg-card__effect">
-            Effet de la carte à définir. Texte de règle sur deux lignes.
-          </span>
-          <span className="tcg-card__foot">
-            <span>{RARITY_NAME[rarity]}</span>
-            <span>Personnage</span>
+          <span className="tcg-card__lower">
+            <ScrollCurl side="left" />
+            <ScrollCurl side="right" />
+            <span className="tcg-card__alive">Dead or Alive</span>
+            <span className={`tcg-card__name${nameSizeClass(card.title)}`}>{card.title}</span>
+            <span className="tcg-card__effect">{card.description}</span>
+            <span className="tcg-card__foot">
+              <span className="tcg-card__bounty">{card.rarity}</span>
+              <span className="tcg-card__rank">{rarityName(card.rarity)}</span>
+            </span>
           </span>
         </span>
       </span>
@@ -124,6 +189,7 @@ function TradingCard({
 
 export default function BoosterOpening() {
   const [phase, setPhase] = useState<Phase>('sealed')
+  const [deck, setDeck] = useState<CardData[]>([])
   const [current, setCurrent] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [burst, setBurst] = useState(0)
@@ -137,15 +203,19 @@ export default function BoosterOpening() {
     return () => window.clearTimeout(timer)
   }, [phase])
 
-  const finished = current >= CARD_COUNT
-  const rarity = RARITIES[current]
+  const finished = current >= deck.length
+  const card = deck[current]
+  const rarity = card?.rarity ?? 'C'
 
-  const openPack = () => setPhase('shaking')
+  const openPack = () => {
+    setDeck(drawBooster())
+    setPhase('shaking')
+  }
 
   const advance = () => {
     if (!flipped) {
       setFlipped(true)
-      if (rarity === 'SR' || rarity === 'R') setBurst((b) => b + 1)
+      if (isRare(rarity)) setBurst((b) => b + 1)
       return
     }
     setCurrent((c) => c + 1)
@@ -164,18 +234,18 @@ export default function BoosterOpening() {
   } else if (phase !== 'reveal') {
     status = 'Ouverture…'
   } else if (finished) {
-    status = 'Booster ouvert. 5 cartes obtenues.'
+    status = `Booster ouvert. ${deck.length} cartes obtenues.`
   } else if (flipped) {
-    status = `${RARITY_NAME[rarity]}. Clique pour passer à la carte suivante.`
+    status = `${rarityName(rarity)}. Clique pour passer à la carte suivante.`
   } else {
-    status = `Carte ${current + 1} sur ${CARD_COUNT}. Clique pour la révéler.`
+    status = `Carte ${current + 1} sur ${deck.length}. Clique pour la révéler.`
   }
 
   return (
     <div className="booster-page">
       <header className="booster-head">
         <h1>Ouverture de booster</h1>
-        <p>Prototype d'interface · cartes factices</p>
+        <p>Prototype d'interface · cartes issues de cartes.json</p>
       </header>
 
       <main className="booster-main">
@@ -197,13 +267,13 @@ export default function BoosterOpening() {
               </button>
             ) : (
               <div className="tcg-stage">
-                {flipped && burst > 0 && (rarity === 'SR' || rarity === 'R') && (
+                {flipped && burst > 0 && isRare(rarity) && (
                   <span key={`burst-${burst}`} className={`burst burst--${rarity.toLowerCase()}`} aria-hidden="true" />
                 )}
                 <TradingCard
                   key={current}
                   index={current}
-                  rarity={rarity}
+                  card={card}
                   flipped={flipped}
                   onClick={advance}
                 />
@@ -211,15 +281,15 @@ export default function BoosterOpening() {
             )}
 
             <ol className="booster-slots" aria-label="Cartes obtenues">
-              {RARITIES.map((r, i) => {
+              {deck.map((c, i) => {
                 const filled = i < current
                 const isCurrent = i === current && !finished
                 return (
                   <li
-                    key={i}
-                    className={`slot slot--${r.toLowerCase()}${filled ? ' is-filled' : ''}${isCurrent ? ' is-current' : ''}`}
+                    key={c.pageid}
+                    className={`slot slot--${c.rarity.toLowerCase()}${filled ? ' is-filled' : ''}${isCurrent ? ' is-current' : ''}`}
                   >
-                    {filled ? r : i + 1}
+                    {filled ? c.rarity : i + 1}
                   </li>
                 )
               })}
