@@ -1,0 +1,759 @@
+/* Hallmark · component: booster-opening · genre: playful · theme: custom (vibe: "ocean treasure comic ink")
+ * states: default · hover · focus · active · disabled · loading · error · success
+ * palette: ocean night · straw-hat red · treasure gold · paper · ink outline
+ * display: Bangers (comic) · body: Geist Variable
+ */
+
+#root:has(.booster-page) {
+  width: 100%;
+  border-inline: 0;
+}
+
+.booster-page {
+  --color-ocean-night: oklch(0.22 0.07 258);
+  --color-ocean: oklch(0.42 0.12 252);
+  --color-sky: oklch(0.82 0.07 230);
+  --color-straw: oklch(0.62 0.21 27);
+  --color-straw-deep: oklch(0.44 0.17 27);
+  --color-gold: oklch(0.85 0.15 88);
+  --color-gold-deep: oklch(0.6 0.14 70);
+  --color-paper: oklch(0.97 0.017 88);
+  --color-paper-2: oklch(0.92 0.03 84);
+  --color-ink: oklch(0.17 0.02 258);
+  --color-ink-soft: oklch(0.4 0.03 258);
+  --color-focus: oklch(0.9 0.14 92);
+
+  --font-display: 'Bangers', Impact, 'Arial Narrow', sans-serif;
+  --font-ui: 'Geist Variable', system-ui, sans-serif;
+
+  --ink-line: 3px solid var(--color-ink);
+  --halftone: radial-gradient(circle, oklch(0.17 0.02 258 / 0.22) 1.3px, transparent 1.7px);
+  --card-w: min(290px, 66vw);
+  --pack-w: min(280px, 70vw);
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  position: relative;
+  min-height: 100svh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  padding: 32px 24px 40px;
+  overflow: hidden;
+  background-color: var(--color-ocean-night);
+  background-image:
+    radial-gradient(circle at 50% 110%, oklch(0.36 0.1 252 / 0.9), transparent 60%),
+    radial-gradient(circle, oklch(0.6 0.06 240 / 0.2) 1px, transparent 1.5px);
+  background-size: auto, 14px 14px;
+  color: var(--color-paper);
+  font-family: var(--font-ui);
+  text-align: center;
+}
+
+.booster-head {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 960px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+  text-align: left;
+}
+
+.booster-head h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--color-gold);
+  text-shadow: 2px 2px 0 var(--color-ink);
+}
+
+.booster-head p {
+  font-size: 14px;
+  color: var(--color-sky);
+}
+
+.booster-main {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+
+.booster-status {
+  min-height: 1.5em;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-sky);
+}
+
+.booster-btn {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.04em;
+  padding: 10px 26px 8px;
+  border: var(--ink-line);
+  border-radius: 12px;
+  background: var(--color-gold);
+  color: var(--color-ink);
+  box-shadow: 0 5px 0 var(--color-ink);
+  cursor: pointer;
+  transition: transform 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out), background-color 0.2s;
+}
+
+.booster-btn:hover {
+  background: oklch(0.9 0.14 88);
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 var(--color-ink);
+}
+
+.booster-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 var(--color-ink);
+}
+
+.booster-btn:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+.booster-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Burst: speed lines behind the stage */
+
+.burst {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(900px, 150vw);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    from 0deg,
+    oklch(1 0 0 / 0.16) 0deg 4deg,
+    transparent 4deg 14deg
+  );
+  mask-image: radial-gradient(circle, #000 10%, transparent 68%);
+  animation: burst 0.9s var(--ease-out) forwards;
+}
+
+.burst--sr {
+  background: repeating-conic-gradient(
+    from 0deg,
+    oklch(0.9 0.14 88 / 0.4) 0deg 4deg,
+    transparent 4deg 14deg
+  );
+}
+
+.burst--r {
+  background: repeating-conic-gradient(
+    from 0deg,
+    oklch(0.62 0.21 27 / 0.45) 0deg 4deg,
+    transparent 4deg 14deg
+  );
+}
+
+@keyframes burst {
+  0% { opacity: 0; scale: 0.4; }
+  20% { opacity: 1; }
+  100% { opacity: 0; scale: 1.15; }
+}
+
+/* Booster pack */
+
+.booster {
+  position: relative;
+  z-index: 1;
+  width: var(--pack-w);
+  aspect-ratio: 5 / 7.5;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  perspective: 1000px;
+}
+
+.booster:disabled {
+  cursor: default;
+}
+
+.booster:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 8px;
+  border-radius: 10px;
+}
+
+.booster__inner {
+  position: absolute;
+  inset: 0;
+  filter: drop-shadow(8px 8px 0 var(--color-ink));
+  transition: transform 0.35s var(--ease-out);
+}
+
+.booster:hover:not(:disabled) .booster__inner {
+  transform: translateY(-6px) rotate(-1.5deg);
+}
+
+.booster:active:not(:disabled) .booster__inner {
+  transform: translateY(-2px) scale(0.99);
+}
+
+.booster__body {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: var(--ink-line);
+  border-radius: 10px;
+  background-color: var(--color-straw);
+  background-image: var(--halftone);
+  background-size: 9px 9px;
+  color: var(--color-paper);
+  overflow: hidden;
+}
+
+/* Two halves cut along the katana line (top edge 18% left → 6% right) */
+
+.booster__body--top {
+  clip-path: polygon(0 0, 100% 0, 100% 6%, 0 18%);
+}
+
+.booster__body--bottom {
+  clip-path: polygon(0 18%, 100% 6%, 100% 100%, 0 100%);
+}
+
+.booster__body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -18deg,
+    transparent 0 26px,
+    oklch(0.44 0.17 27 / 0.45) 26px 30px
+  );
+}
+
+.booster__emblem {
+  position: relative;
+  width: 46%;
+  aspect-ratio: 1;
+  padding: 10%;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: var(--color-gold);
+  color: var(--color-ink);
+  border: var(--ink-line);
+}
+
+.booster__name {
+  position: relative;
+  margin-top: 14px;
+  font-family: var(--font-display);
+  font-size: calc(var(--pack-w) * 0.2);
+  line-height: 1;
+  color: var(--color-paper);
+  text-shadow: 3px 3px 0 var(--color-ink);
+}
+
+.booster__meta {
+  position: relative;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border: 2px solid var(--color-ink);
+  border-radius: 999px;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+/* Katana slash: blade streak, white flash, then the halves fall apart */
+
+.booster__blade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.booster__blade path {
+  fill: none;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+}
+
+.booster__blade-glow {
+  stroke: var(--color-gold);
+  stroke-width: 10px;
+  opacity: 0.55;
+  filter: blur(3px);
+}
+
+.booster__blade-core {
+  stroke: #fff;
+  stroke-width: 2.5px;
+}
+
+.booster__flash {
+  position: absolute;
+  inset: -10%;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    ellipse at 50% 40%,
+    #fff 0%,
+    oklch(0.95 0.1 90 / 0.6) 35%,
+    transparent 70%
+  );
+  mix-blend-mode: screen;
+}
+
+.booster--shaking .booster__inner {
+  animation: booster-shake 0.5s ease-in-out;
+}
+
+.booster--tearing .booster__blade {
+  animation: blade-fade 0.5s ease-out forwards;
+}
+
+.booster--tearing .booster__blade path {
+  animation: blade-draw 0.32s var(--ease-out) forwards;
+}
+
+.booster--tearing .booster__flash {
+  animation: slash-flash 0.5s 0.2s ease-out forwards;
+}
+
+.booster--tearing .booster__body--top {
+  animation: split-top 0.9s 0.3s cubic-bezier(0.3, 0.6, 0.3, 1) forwards;
+}
+
+.booster--tearing .booster__body--bottom {
+  animation: split-bottom 0.9s 0.3s cubic-bezier(0.3, 0.6, 0.3, 1) forwards;
+}
+
+@keyframes blade-draw {
+  0% { stroke-dashoffset: 1; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes blade-fade {
+  0%, 60% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes slash-flash {
+  0% { opacity: 0; }
+  30% { opacity: 0.95; }
+  100% { opacity: 0; }
+}
+
+@keyframes booster-shake {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(-2.5deg) translateX(-3px); }
+  40% { transform: rotate(2.5deg) translateX(3px); }
+  60% { transform: rotate(-3deg) translateX(-3px); }
+  80% { transform: rotate(3deg) translateX(3px); }
+}
+
+@keyframes split-top {
+  0% { transform: none; opacity: 1; }
+  60% { opacity: 1; }
+  100% { transform: translate(44px, -200px) rotate(-16deg); opacity: 0; }
+}
+
+@keyframes split-bottom {
+  0% { transform: none; opacity: 1; }
+  60% { opacity: 1; }
+  100% { transform: translate(-30px, 240px) rotate(11deg); opacity: 0; }
+}
+
+/* Trading card */
+
+.tcg-stage {
+  position: relative;
+  z-index: 1;
+  width: var(--card-w);
+  aspect-ratio: 5 / 7;
+  perspective: 1400px;
+}
+
+.tcg-card {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  background: none;
+  cursor: pointer;
+  animation: card-in 0.45s var(--ease-out) both;
+  --frame: var(--color-ink);
+  --art-bg: var(--color-sky);
+  --art-ink: var(--color-ink);
+}
+
+.tcg-card:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 6px;
+}
+
+.tcg-card__inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.7s var(--ease-out);
+}
+
+.tcg-card:not(.is-flipped):hover .tcg-card__inner {
+  transform: translateY(-8px) rotate(-1deg);
+}
+
+.tcg-card.is-flipped .tcg-card__inner {
+  transform: rotateY(180deg);
+}
+
+.tcg-card__face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: var(--ink-line);
+  border-radius: 14px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow: 8px 8px 0 var(--color-ink);
+}
+
+/* Card back: ocean with halftone and a gold wheel */
+
+.tcg-card__back {
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-ocean);
+  background-image: var(--halftone);
+  background-size: 10px 10px;
+}
+
+.tcg-card__back::before {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border: 2px solid var(--color-gold);
+  border-radius: 8px;
+}
+
+.tcg-card__mark {
+  width: 46%;
+  aspect-ratio: 1;
+  color: var(--color-gold);
+  filter: drop-shadow(3px 3px 0 var(--color-ink));
+}
+
+/* Card front */
+
+.tcg-card__front {
+  position: absolute;
+  padding: 12px;
+  transform: rotateY(180deg);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  text-align: left;
+}
+
+.tcg-card__top,
+.tcg-card__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tcg-card__number {
+  color: var(--color-ink-soft);
+}
+
+.tcg-card__rarity {
+  min-width: 34px;
+  padding: 2px 8px 1px;
+  border: 2px solid var(--color-ink);
+  border-radius: 6px;
+  background: var(--color-straw);
+  color: var(--color-paper);
+  font-family: var(--font-display);
+  font-size: 17px;
+  line-height: 1.1;
+  text-align: center;
+  text-shadow: 1px 1px 0 var(--color-ink);
+}
+
+.tcg-card__art {
+  position: relative;
+  flex: 1;
+  margin: 10px 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 6px;
+  border: 2px solid var(--color-ink);
+  border-radius: 8px;
+  background-color: var(--art-bg);
+  background-image: var(--halftone);
+  background-size: 9px 9px;
+  color: var(--art-ink);
+  overflow: hidden;
+}
+
+.tcg-card__art-icon {
+  width: 56px;
+  aspect-ratio: 1;
+  color: var(--art-ink);
+  opacity: 0.85;
+}
+
+.tcg-card__art-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--art-ink);
+}
+
+.tcg-card__name {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3.2vw, 28px);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--color-ink);
+}
+
+.tcg-card__effect {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 2px solid var(--color-ink);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-ink-soft);
+}
+
+.tcg-card__foot {
+  margin-top: auto;
+  padding-top: 8px;
+  color: var(--color-ink-soft);
+  font-weight: 600;
+}
+
+/* Rarity: C commune · UC peu commune · R rare · SR super rare */
+
+.rarity-c {
+  --frame: var(--color-ink);
+  --art-bg: var(--color-paper-2);
+}
+
+.rarity-uc {
+  --art-bg: var(--color-sky);
+}
+
+.rarity-uc .tcg-card__rarity {
+  background: var(--color-ocean);
+}
+
+.rarity-r {
+  --art-bg: oklch(0.9 0.06 40);
+}
+
+.rarity-r .tcg-card__art {
+  background-image:
+    repeating-linear-gradient(-22deg, transparent 0 12px, oklch(0.62 0.21 27 / 0.3) 12px 14px);
+}
+
+.rarity-r .tcg-card__name {
+  color: var(--color-straw-deep);
+}
+
+.rarity-sr .tcg-card__front {
+  background-color: var(--color-ocean-night);
+  color: var(--color-paper);
+}
+
+.rarity-sr .tcg-card__number,
+.rarity-sr .tcg-card__effect,
+.rarity-sr .tcg-card__foot {
+  color: var(--color-sky);
+}
+
+.rarity-sr .tcg-card__effect,
+.rarity-sr .tcg-card__foot {
+  border-top-color: var(--color-gold);
+}
+
+.rarity-sr .tcg-card__art {
+  --art-bg: var(--color-ocean);
+  --art-ink: var(--color-gold);
+  border-color: var(--color-gold);
+  background-image: var(--halftone);
+}
+
+.rarity-sr .tcg-card__rarity {
+  background: var(--color-gold);
+  color: var(--color-ink);
+  text-shadow: none;
+}
+
+.rarity-sr .tcg-card__name {
+  color: var(--color-gold);
+  text-shadow: 2px 2px 0 var(--color-ink);
+}
+
+.rarity-sr .tcg-card__front::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    oklch(0.95 0.1 200 / 0.35) 42%,
+    oklch(0.95 0.12 330 / 0.35) 50%,
+    oklch(0.95 0.12 90 / 0.35) 58%,
+    transparent 70%
+  );
+  background-size: 300% 100%;
+  mix-blend-mode: screen;
+  animation: sheen 3.2s linear infinite;
+}
+
+.rarity-sr.is-flipped .tcg-card__face {
+  box-shadow: 8px 8px 0 var(--color-ink), 0 0 60px -6px oklch(0.85 0.15 88 / 0.7);
+}
+
+@keyframes sheen {
+  from { background-position: 150% 0; }
+  to { background-position: -150% 0; }
+}
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(18px) scale(0.94) rotate(-2deg); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Progress slots */
+
+.booster-slots {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.slot {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  aspect-ratio: 5 / 7;
+  border-radius: 6px;
+  border: 2px dashed oklch(0.6 0.06 245);
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: oklch(0.7 0.06 245);
+  transition: background-color 0.3s var(--ease-out), border-color 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+}
+
+.slot.is-current {
+  border-color: var(--color-focus);
+  color: var(--color-gold);
+  transform: translateY(-4px);
+}
+
+.slot.is-filled {
+  border: 2px solid var(--color-ink);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  box-shadow: 3px 3px 0 var(--color-ink);
+}
+
+.slot--r.is-filled {
+  background: oklch(0.9 0.06 40);
+  color: var(--color-straw-deep);
+}
+
+.slot--sr.is-filled {
+  background: var(--color-ocean-night);
+  color: var(--color-gold);
+  border-color: var(--color-gold);
+}
+
+/* Reduced motion: keep state changes, swap spatial motion for opacity */
+
+@media (prefers-reduced-motion: reduce) {
+  .booster-page *,
+  .booster-page *::before,
+  .booster-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.15s !important;
+  }
+
+  .burst {
+    animation: none;
+    opacity: 0.4;
+  }
+
+  .booster--shaking .booster__inner,
+  .booster:hover .booster__inner,
+  .tcg-card:not(.is-flipped):hover .tcg-card__inner,
+  .tcg-card__inner {
+    transform: none !important;
+  }
+
+  .tcg-card__back {
+    transition: opacity 0.15s;
+  }
+
+  .tcg-card.is-flipped .tcg-card__back {
+    opacity: 0;
+  }
+
+  .tcg-card__front {
+    opacity: 0;
+    transform: none;
+    transition: opacity 0.15s;
+  }
+
+  .tcg-card.is-flipped .tcg-card__front {
+    opacity: 1;
+  }
+
+  .rarity-sr .tcg-card__front::after {
+    animation: none;
+  }
+}
