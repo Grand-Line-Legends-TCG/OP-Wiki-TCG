@@ -1,6 +1,6 @@
-/* Hallmark · component: booster-opening · genre: playful · theme: custom (vibe: "ocean treasure comic ink")
+/* Hallmark · component: booster-opening · genre: playful · theme: custom (vibe: "devil fruit violet smoke swirl comic ink")
  * states: default · hover · focus · active · disabled · loading · error · success
- * palette: ocean night · straw-hat red · treasure gold · paper · ink outline
+ * palette: devil fruit night · fruit violet · stem gold · straw-hat red · paper · ink outline
  * display: Bangers (comic) · body: Geist Variable
  */
 
@@ -12,7 +12,7 @@
 .booster-page {
   --color-ocean-night: oklch(0.22 0.07 258);
   --color-ocean: oklch(0.42 0.12 252);
-  --color-sky: oklch(0.82 0.07 230);
+  --color-mist: oklch(0.84 0.09 300);
   --color-straw: oklch(0.62 0.21 27);
   --color-straw-deep: oklch(0.44 0.17 27);
   --color-gold: oklch(0.85 0.15 88);
@@ -22,6 +22,8 @@
   --color-ink: oklch(0.17 0.02 258);
   --color-ink-soft: oklch(0.4 0.03 258);
   --color-focus: oklch(0.9 0.14 92);
+  --color-fruit-night: oklch(0.12 0.045 292);
+  --color-card-black: oklch(0.09 0.004 265);
 
   --font-display: 'Bangers', Impact, 'Arial Narrow', sans-serif;
   --font-ui: 'Geist Variable', system-ui, sans-serif;
@@ -48,11 +50,12 @@
   gap: 32px;
   padding: 32px 24px 40px;
   overflow: hidden;
-  background-color: var(--color-ocean-night);
+  background-color: var(--color-fruit-night);
   background-image:
-    radial-gradient(circle at 50% 110%, oklch(0.36 0.1 252 / 0.9), transparent 60%),
-    radial-gradient(circle, oklch(0.6 0.06 240 / 0.2) 1px, transparent 1.5px);
-  background-size: auto, 14px 14px;
+    radial-gradient(ellipse 45% 30% at 50% 38%, oklch(0.42 0.16 298 / 0.45), transparent 70%),
+    radial-gradient(ellipse 35% 22% at 22% 30%, oklch(0.4 0.14 290 / 0.25), transparent 70%),
+    radial-gradient(ellipse 35% 25% at 80% 62%, oklch(0.38 0.14 300 / 0.25), transparent 70%),
+    radial-gradient(ellipse 100% 55% at 50% 100%, oklch(0.08 0.03 292 / 0.9), transparent 70%);
   color: var(--color-paper);
   font-family: var(--font-ui);
   text-align: center;
@@ -83,7 +86,7 @@
 
 .booster-head p {
   font-size: 14px;
-  color: var(--color-sky);
+  color: var(--color-mist);
 }
 
 .booster-main {
@@ -103,7 +106,7 @@
   margin: 0;
   font-size: 16px;
   font-weight: 500;
-  color: var(--color-sky);
+  color: var(--color-mist);
 }
 
 .booster-btn {
@@ -226,18 +229,37 @@
 .booster__body {
   position: absolute;
   inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  display: block;
   border: var(--ink-line);
   border-radius: 10px;
-  background-color: var(--color-straw);
-  background-image: var(--halftone);
-  background-size: 9px 9px;
+  background-color: var(--color-ink);
   color: var(--color-paper);
   overflow: hidden;
+}
+
+/* Key art: /blister.jpg fills the whole pack. Both halves share the same box
+   and the same cover fit, so the picture stays continuous across the cut. */
+
+.booster__art {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(180deg, oklch(0.1 0.03 285 / 0.5) 0%, oklch(0.1 0.03 285 / 0.12) 28%, transparent 46%),
+    linear-gradient(0deg, oklch(0.08 0.03 285 / 0.94) 0%, oklch(0.08 0.03 285 / 0.6) 26%, transparent 58%),
+    url('/blister.jpg');
+  background-position: 0 0, 0 0, 50% 36%;
+  background-size: auto, auto, cover;
+  background-repeat: no-repeat;
+}
+
+.booster__art::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--halftone);
+  background-size: 7px 7px;
+  opacity: 0.3;
+  mix-blend-mode: multiply;
 }
 
 /* Two halves cut along the katana line (top edge 18% left → 6% right) */
@@ -250,48 +272,60 @@
   clip-path: polygon(0 18%, 100% 6%, 100% 100%, 0 100%);
 }
 
-.booster__body::before {
-  content: '';
+/* Text block, moved to the lower half so the blade cuts empty art */
+
+.booster__label {
   position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    -18deg,
-    transparent 0 26px,
-    oklch(0.44 0.17 27 / 0.45) 26px 30px
-  );
+  left: 0;
+  right: 0;
+  bottom: 7%;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  padding: 0 14px;
+}
+
+.booster__crest {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-gold);
+  border: 2px solid var(--color-ink);
+  box-shadow: 0 2px 0 var(--color-ink);
 }
 
 .booster__emblem {
-  position: relative;
-  width: 46%;
-  aspect-ratio: 1;
-  padding: 10%;
-  box-sizing: border-box;
-  border-radius: 50%;
-  background: var(--color-gold);
+  width: 22px;
+  height: 22px;
   color: var(--color-ink);
-  border: var(--ink-line);
 }
 
 .booster__name {
-  position: relative;
-  margin-top: 14px;
+  max-width: 100%;
   font-family: var(--font-display);
-  font-size: calc(var(--pack-w) * 0.2);
-  line-height: 1;
+  font-size: calc(var(--pack-w) * 0.115);
+  line-height: 0.95;
+  letter-spacing: 0.02em;
+  text-align: center;
   color: var(--color-paper);
-  text-shadow: 3px 3px 0 var(--color-ink);
+  text-shadow: 2px 2px 0 var(--color-ink), 0 0 18px oklch(0.1 0.03 285 / 0.8);
+  overflow-wrap: anywhere;
 }
 
 .booster__meta {
-  position: relative;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 4px 12px;
+  padding: 3px 11px;
   border: 2px solid var(--color-ink);
   border-radius: 999px;
   background: var(--color-paper);
   color: var(--color-ink);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 /* Katana slash: blade streak, white flash, then the halves fall apart */
@@ -456,29 +490,49 @@
   box-shadow: 8px 8px 0 var(--color-ink);
 }
 
-/* Card back: ocean with halftone and a gold wheel */
+/* Card back: manga cover. Black field, dark grey chart texture, straw-hat crest */
+
+/* Card back: key art /card-back.png, framed, with the site name at the foot */
 
 .tcg-card__back {
   align-items: center;
   justify-content: center;
-  background-color: var(--color-ocean);
-  background-image: var(--halftone);
-  background-size: 10px 10px;
+  background-color: var(--color-card-black);
+  background-image: url('/card-back.png');
+  background-size: contain;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  box-shadow:
+    inset 0 0 0 1px oklch(0.86 0.13 86 / 0.35),
+    8px 8px 0 var(--color-ink);
 }
+
+/* Gold frame inside the art */
 
 .tcg-card__back::before {
   content: '';
   position: absolute;
-  inset: 12px;
+  inset: 9px;
   border: 2px solid var(--color-gold);
-  border-radius: 8px;
+  border-radius: 9px;
+  box-shadow: 0 0 0 1px oklch(0.1 0.02 265 / 0.7), inset 0 0 0 1px oklch(0.1 0.02 265 / 0.5);
+  pointer-events: none;
 }
 
-.tcg-card__mark {
-  width: 46%;
-  aspect-ratio: 1;
+.tcg-card__backmark {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 7%;
+  font-family: var(--font-ui);
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  text-align: center;
   color: var(--color-gold);
-  filter: drop-shadow(3px 3px 0 var(--color-ink));
+  text-shadow: 0 1px 2px oklch(0 0 0 / 0.9);
 }
 
 /* Card front: wanted poster on aged parchment */
