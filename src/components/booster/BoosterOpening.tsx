@@ -80,9 +80,14 @@ function ScrollCurl({ side }: { side: 'left' | 'right' }) {
 function PackHalf({ part }: { part: 'top' | 'bottom' }) {
   return (
     <span className={`booster__body booster__body--${part}`}>
-      <ShipWheel className="booster__emblem" />
-      <span className="booster__name">Booster</span>
-      <span className="booster__meta">Set de test · 5 cartes</span>
+      <span className="booster__art" aria-hidden="true" />
+      <span className="booster__label">
+        <span className="booster__crest">
+          <ShipWheel className="booster__emblem" />
+        </span>
+        <span className="booster__name">Grand Line Legends</span>
+        <span className="booster__meta">Booster · 5 cartes</span>
+      </span>
     </span>
   )
 }
