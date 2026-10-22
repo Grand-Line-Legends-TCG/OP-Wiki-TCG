@@ -1,0 +1,44 @@
+# VPS deployment behind an existing Nginx Proxy Manager (NPM).
+#
+# The app is NOT exposed on the host: it joins NPM's Docker network and NPM
+# proxies to it using the container name `op-tcg-app` on port 3000.
+#
+# Usage:
+#   1. Find NPM's network:  docker network ls
+#   2. Set it in .env:      NPM_NETWORK=nginx-proxy-manager_default
+#   3. Start:               docker compose -f docker-compose.npm.yml up -d --build
+#
+# In NPM create a Proxy Host:
+#   Domain:            tcg.example.com
+#   Scheme:            http
+#   Forward hostname:  op-tcg-app
+#   Forward port:      3000
+#   Websockets:        enabled
+#   Block common exploits: enabled
+#   SSL:               Let's Encrypt + Force SSL
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: op-tcg-next:latest
+    container_name: op-tcg-app
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - npm
+
+networks:
+  npm:
+    external: true
+    name: ${NPM_NETWORK:-npm-network}
