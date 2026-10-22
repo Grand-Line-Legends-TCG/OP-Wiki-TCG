@@ -1,9 +1,11 @@
+"use client"
+
 import { useEffect, useState } from 'react'
 import '@fontsource/bangers/400.css'
 import '@fontsource/cinzel/400.css'
 import '@fontsource/cinzel/700.css'
 import '@fontsource/cinzel/900.css'
-import cartesData from '../../../cartes.json'
+import cartesData from '../../cartes.json'
 import './booster.css'
 
 type Phase = 'sealed' | 'shaking' | 'tearing' | 'reveal'
@@ -249,7 +251,7 @@ export default function BoosterOpening() {
   return (
     <div className="booster-page">
       <header className="booster-head">
-        <h1>Ouverture de booster</h1>
+        <h1>Grand Line Legends</h1>
         <p>Prototype d'interface · cartes issues de cartes.json</p>
       </header>
 
