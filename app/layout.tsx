@@ -1,23 +1,19 @@
-import type { Metadata } from 'next'
-import './globals.css'
-
-export const metadata: Metadata = {
-  title: 'Grand Line Legends - One Piece TCG',
-  description: 'Jeu de cartes à collectionner One Piece',
-}
+import { UserProvider } from '@/context/UserContext';
+import './globals.css'; // Assurez-vous d'importer votre CSS global
 
 export default function RootLayout({
-                                     children,
+                                       children,
                                    }: Readonly<{
-  children: React.ReactNode
+    children: React.ReactNode
 }>) {
-  return (
-      <html lang="fr">
-      {}
-      <body className="antialiased bg-slate-950 text-white min-h-screen">
-      {}
-      {children}
-      </body>
-      </html>
-  )
+    return (
+        <html lang="fr">
+        <body>
+        {/* C'est cette balise qui donne accès à la mémoire à toutes les pages */}
+        <UserProvider>
+            {children}
+        </UserProvider>
+        </body>
+        </html>
+    );
 }
